@@ -1,23 +1,21 @@
 # chaoxing-sign-ui
 
-## Available Scripts
+基于 React.js, 使用 Material UI 组件库构建。作为 [chaoxing-sign-cli](https://github.com/miaochenxi/chaoxing-sign-cli) 的客户端，欢迎对本代码进行二次开发。
 
-In the project directory, you can run:
+## 运行
 
-### `yarn start`
+### `yarn install`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+安装依赖。
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### `yarn start `
 
-### `yarn build`
+启动开发服务器。
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 配置
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+`src/config/api.js` ：文件中配置 `baseUrl` 变量为 `API` 地址。
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 鸣谢
+
+非常感谢超星学习通，实践出真知。
