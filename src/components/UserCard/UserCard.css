@@ -1,4 +1,24 @@
-.name{
-  color:rgb(73, 85, 105);
+.name {
+  color: rgb(73, 85, 105);
   font-weight: 600;
+}
+.neum-card {
+  border-radius: 13px !important;
+  box-shadow: 16px 16px 32px #c9cccf, -16px -16px 32px #ffffff !important;
+  transition: 0.3s !important;
+}
+
+.neum-card:hover {
+  transform: scale(1.05);
+  background: #e9eef1;
+  transition: 0.3s;
+}
+
+@media screen and (max-width: 500px) {
+  .neum-card {
+    border-radius: 13px;
+    background: #ecf0f3;
+    margin: 0 1rem 2rem !important;
+    box-shadow: 13px 13px 26px #c9cccf, -13px -13px 26px #ffffff !important;
+  }
 }

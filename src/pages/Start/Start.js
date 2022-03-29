@@ -29,7 +29,7 @@ function Start() {
       // 写入数据库
       let request = indb.transaction(['user'], 'readwrite')
         .objectStore('user')
-        .add({
+        .put({
           phone: phoneNum, // 手机号
           fid: res.data.fid,
           vc3: res.data.vc3,
@@ -41,7 +41,10 @@ function Start() {
           date: new Date() // 判断时间进行重新认证身份
         })
       request.onerror = () => { console.log('用户写入失败') }
-      request.onsuccess = () => { console.log('用户写入成功') }
+      request.onsuccess = () => {
+        console.log('用户写入成功')
+        window.location.reload()
+      }
     }
     else {
       setMessage(true)
@@ -85,7 +88,7 @@ function Start() {
   return (
     <div>
       <h1>让我们开始吧</h1>
-      <p>你可以选择或添加一个用户</p>
+      <p className='hint'>你可以选择或添加一个用户</p>
       {
         // 渲染所有用户卡片
         user.map((e, i) => {
@@ -101,11 +104,13 @@ function Start() {
         sx={{
           maxWidth: 345,
           minWidth: 300,
-          backgroundColor: '#f5f7f9',
+          backgroundColor: '#ecf0f3',
           height: 165,
-          marginBottom: 1,
-          marginRight: 1
+          marginBottom: 3.5,
+          marginRight: 3.5
+
         }}
+        className='neum-card'
         onClick={() => { setOpen(true) }}
       >
         <Icon sx={{
