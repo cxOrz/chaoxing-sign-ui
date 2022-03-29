@@ -1,4 +1,4 @@
-import { Alert, ButtonBase, Checkbox, FormControlLabel, FormLabel, Radio, RadioGroup, Snackbar, TextField } from '@mui/material'
+import { Alert, ButtonBase, Snackbar } from '@mui/material'
 import { Box } from '@mui/system'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
@@ -41,24 +41,6 @@ function DashBoard(props) {
       setSign({ activity: { name: '无签到活动' } })
     } else {
       setSign({ activity: activity.data })
-    }
-    switch (activity.data.otherId) {
-      case 2: {
-        // 二维码签到
-      }
-      case 4: {
-        // 位置签到
-      }
-      case 3: {
-        // 手势签到
-      }
-      case 5: {
-        // 签到码签到
-      }
-      case 0: {
-        // 拍照签到
-        // 普通签到
-      }
     }
   }
 
