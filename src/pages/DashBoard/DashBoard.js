@@ -1,4 +1,4 @@
-import { Alert, ButtonBase, Snackbar } from '@mui/material'
+import { Alert, ButtonBase, CircularProgress, Snackbar } from '@mui/material'
 import { Box } from '@mui/system'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
@@ -15,8 +15,8 @@ function DashBoard(props) {
     },
     status: ''
   })
+  const [progress, setProgress] = useState(false)
   const [values, setValues] = useState({})
-  const [indb, setIndb] = useState()
   const [alert, setAlert] = useState({ msg: '', show: false, severity: 'info' })
 
   const [control, setControl] = useState({
@@ -29,6 +29,7 @@ function DashBoard(props) {
     document.getElementById('start-btn').classList.add('hidden')
     setTimeout(() => {
       setControl({ start: { show: false } })
+      setProgress(true)
     }, 500)
     let activity = await axios.post(activity_api, {
       uf: userParams.uf,
@@ -37,6 +38,7 @@ function DashBoard(props) {
       uid: userParams._uid
     })
     console.log(activity.data)
+    setProgress(false)
     if (activity.data === 'NoActivity') {
       setSign({ activity: { name: '无签到活动' } })
     } else {
@@ -110,7 +112,9 @@ function DashBoard(props) {
         label_general.className = 'unchecked'
         label_photo.className = 'checked'
         setAlert({ msg: '确保已将照片上传指定位置，点击签到', severity: 'info', show: true })
+        break
       }
+      default: break
     }
   }
   const updateValue = (name, value) => {
@@ -200,7 +204,6 @@ function DashBoard(props) {
     request.onsuccess = () => {
       // 判断登录时间，进行重新认证
       let db = request.result.transaction('user', 'readwrite').objectStore('user')
-      setIndb(db)
       // 获取用户登录时间
       db.get(params.phone).onsuccess = async (event) => {
         setUserParams(event.target.result)
@@ -247,6 +250,11 @@ function DashBoard(props) {
         >
           <span>开始</span>
         </ButtonBase>
+      }
+      {
+        progress &&
+        <CircularProgress size='5rem' />
+
       }
       <h1>{sign.activity.name}</h1>
       {
