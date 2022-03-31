@@ -1,7 +1,7 @@
 import { AddCircleOutlineOutlined } from '@mui/icons-material'
 import { Button, ButtonBase, Icon, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Snackbar, Alert } from '@mui/material'
 import axios from 'axios'
-import React, { createRef, useEffect, useState } from 'react'
+import React, { createRef, useEffect, useRef, useState } from 'react'
 import UserCard from '../../components/UserCard/UserCard'
 import { login_api } from '../../config/api'
 import './Start.css'
@@ -11,17 +11,20 @@ function Start() {
   const [open, setOpen] = useState(false)
   const [message, setMessage] = useState(false)
   const [user, setUser] = useState([])
+  const loginBtn = useRef(null)
   const phone = createRef()
   const password = createRef()
 
   const login = async () => {
+    loginBtn.current.disabled = 'disabled'
+    console.log('disbaled')
     let res = await axios.post(login_api, {
       phone: phone.current.value,
       password: password.current.value
     })
     let phoneNum = phone.current.value
     let userPwd = password.current.value
-
+    loginBtn.current.removeAttribute('disabled')
     // 登陆成功
     if (res.data !== 'AuthFailed') {
       setOpen(false)
@@ -149,7 +152,7 @@ function Start() {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => { setOpen(false) }}>取消</Button>
-          <Button onClick={login}>确认添加</Button>
+          <Button ref={loginBtn} onClick={login}>确认添加</Button>
         </DialogActions>
       </Dialog>
       <Snackbar
