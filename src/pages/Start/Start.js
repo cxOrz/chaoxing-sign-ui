@@ -65,7 +65,7 @@ function Start() {
       console.log("数据库打开成功")
       setIndb(event.target.result)
       // 遍历全部数据
-      event.target.result.transaction('user').objectStore('user')
+      event.target.result.transaction('user', 'readwrite').objectStore('user')
         .openCursor().onsuccess = (event) => {
           let cursor = event.target.result
           if (cursor) {
@@ -96,6 +96,7 @@ function Start() {
         // 渲染所有用户卡片
         user.map((e, i) => {
           return (<UserCard
+            indb={indb}
             key={i}
             name={e.name}
             phone={e.phone}
