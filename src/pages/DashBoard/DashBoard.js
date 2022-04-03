@@ -176,13 +176,9 @@ function DashBoard(props) {
     return new Promise((resolve, reject) => {
       const qr = new QrCode()
       qr.callback = function (err, value) {
-        if (err) {
-          reject(err)
-        }
-        let rawResult = value.result;
-        let enc = rawResult.split('=').pop()
-        resolve(enc)
-      };
+        if (value) resolve(value.result.split('=').pop())
+        else resolve('')
+      }
       const reader = new FileReader()
       reader.addEventListener("load", () => {
         const src = reader.result
@@ -193,9 +189,8 @@ function DashBoard(props) {
   }
   const setEncByQRCodeImage = async (event) => {
     const image = event.target.files[0]
+    // 对图片文件进行解析获得enc
     const enc = await getEncFromFile(image)
-    console.log(enc)
-    // input-enc
     values['enc'] = enc
     const encInput = document.getElementById('input-enc')
     encInput.setAttribute('value', enc)
@@ -320,6 +315,9 @@ function DashBoard(props) {
           component='div'
           id='neum-form'
           className='neum-form'
+          sx={{
+            minHeight: '450px'
+          }}
         >
           <h3>{sign.status}</h3>
           <div id='neum-form-content' className='form-content'>
@@ -327,12 +325,24 @@ function DashBoard(props) {
             <input id='input-enc' className='input-area' type='text' onChange={(e) => {
               updateValue('enc', e.target.value)
             }} />
-            <br />
-            <label for="qrcodeUpload" className='file-upload-container'>
-              <div>从图片获取enc</div>
-              <input id='qrcodeUpload' type='file' className='sr-only' accept='image/*' onChange={setEncByQRCodeImage}></input>
-            </label>
-            <br />
+            <ButtonBase className='neum-form-button'
+              onClick={() => {
+                document.getElementById('qrcodeUpload').click()
+              }}
+              sx={{
+                width: '16rem'
+              }}
+            >
+              <div>扫描图片</div>
+              <input
+                style={{
+                  display: 'none'
+                }}
+                id='qrcodeUpload'
+                type='file'
+                accept='image/*'
+                onChange={setEncByQRCodeImage}></input>
+            </ButtonBase>
             <ButtonBase
               id='sign-btn'
               onClick={onSign_2}
