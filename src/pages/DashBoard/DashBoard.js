@@ -1,6 +1,7 @@
 import { Alert, ButtonBase, CircularProgress, Snackbar } from '@mui/material'
 import { Box } from '@mui/system'
 import axios from 'axios'
+import QrCode from "qrcode-reader"
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { activity_api, general_api, login_api, location_api, qrcode_api, photo_api } from '../../config/api'
@@ -171,6 +172,34 @@ function DashBoard(props) {
       neum_form.classList.add('form-height')
     }, 600)
   }
+  const getEncFromFile = (file) => {
+    return new Promise((resolve, reject) => {
+      const qr = new QrCode()
+      qr.callback = function (err, value) {
+        if (err) {
+          reject(err)
+        }
+        let rawResult = value.result;
+        let enc = rawResult.split('=').pop()
+        resolve(enc)
+      };
+      const reader = new FileReader()
+      reader.addEventListener("load", () => {
+        const src = reader.result
+        qr.decode(src)
+      })
+      reader.readAsDataURL(file)
+    })
+  }
+  const setEncByQRCodeImage = async (event) => {
+    const image = event.target.files[0]
+    const enc = await getEncFromFile(image)
+    console.log(enc)
+    // input-enc
+    values['enc'] = enc
+    const encInput = document.getElementById('input-enc')
+    encInput.setAttribute('value', enc)
+  }
   const onSign_4 = async () => {
     let res = await locationSign(
       Number(values['latlon'].substring(values['latlon'].indexOf(',') + 1, values['latlon'].length)),
@@ -298,6 +327,11 @@ function DashBoard(props) {
             <input id='input-enc' className='input-area' type='text' onChange={(e) => {
               updateValue('enc', e.target.value)
             }} />
+            <br />
+            <label for="qrcodeUpload" className='file-upload-container'>
+              <div>从图片获取enc</div>
+              <input id='qrcodeUpload' type='file' className='sr-only' accept='image/*' onChange={setEncByQRCodeImage}></input>
+            </label>
             <br />
             <ButtonBase
               id='sign-btn'
