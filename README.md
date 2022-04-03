@@ -26,7 +26,7 @@
 
 ![](https://636c-cloudbase-1a4211-1252446325.tcb.qcloud.la/chaoxing-sign-ui/1.png)
 ![](https://636c-cloudbase-1a4211-1252446325.tcb.qcloud.la/chaoxing-sign-ui/4.png)
-![](https://636c-cloudbase-1a4211-1252446325.tcb.qcloud.la/chaoxing-sign-ui/2.png)
+![](https://clas-bucket.oss-cn-hangzhou.aliyuncs.com/uPic/GGwss8.png)
 ![](https://636c-cloudbase-1a4211-1252446325.tcb.qcloud.la/chaoxing-sign-ui/3.png)
 
 ## 鸣谢
