@@ -93,7 +93,7 @@ h1 {
 
 .form-content {
   opacity: 1;
-  transition: 0.5s;
+  transition: 0.4s;
 }
 
 @media screen and (max-width: 500px) {

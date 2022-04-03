@@ -1,6 +1,7 @@
 import { Alert, ButtonBase, CircularProgress, Snackbar } from '@mui/material'
 import { Box } from '@mui/system'
 import axios from 'axios'
+import QrCode from "qrcode-reader"
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { activity_api, general_api, login_api, location_api, qrcode_api, photo_api } from '../../config/api'
@@ -171,6 +172,29 @@ function DashBoard(props) {
       neum_form.classList.add('form-height')
     }, 600)
   }
+  const getEncFromFile = (file) => {
+    return new Promise((resolve, reject) => {
+      const qr = new QrCode()
+      qr.callback = function (err, value) {
+        if (value) resolve(value.result.split('=').pop())
+        else resolve('')
+      }
+      const reader = new FileReader()
+      reader.addEventListener("load", () => {
+        const src = reader.result
+        qr.decode(src)
+      })
+      reader.readAsDataURL(file)
+    })
+  }
+  const setEncByQRCodeImage = async (event) => {
+    const image = event.target.files[0]
+    // 对图片文件进行解析获得enc
+    const enc = await getEncFromFile(image)
+    values['enc'] = enc
+    const encInput = document.getElementById('input-enc')
+    encInput.setAttribute('value', enc)
+  }
   const onSign_4 = async () => {
     let res = await locationSign(
       Number(values['latlon'].substring(values['latlon'].indexOf(',') + 1, values['latlon'].length)),
@@ -291,6 +315,9 @@ function DashBoard(props) {
           component='div'
           id='neum-form'
           className='neum-form'
+          sx={{
+            minHeight: '450px'
+          }}
         >
           <h3>{sign.status}</h3>
           <div id='neum-form-content' className='form-content'>
@@ -298,7 +325,24 @@ function DashBoard(props) {
             <input id='input-enc' className='input-area' type='text' onChange={(e) => {
               updateValue('enc', e.target.value)
             }} />
-            <br />
+            <ButtonBase className='neum-form-button'
+              onClick={() => {
+                document.getElementById('qrcodeUpload').click()
+              }}
+              sx={{
+                width: '16rem'
+              }}
+            >
+              <div>扫描图片</div>
+              <input
+                style={{
+                  display: 'none'
+                }}
+                id='qrcodeUpload'
+                type='file'
+                accept='image/*'
+                onChange={setEncByQRCodeImage}></input>
+            </ButtonBase>
             <ButtonBase
               id='sign-btn'
               onClick={onSign_2}
