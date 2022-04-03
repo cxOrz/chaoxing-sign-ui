@@ -146,10 +146,8 @@ function DashBoard(props) {
     let res
     if (document.getElementById('general').checked) {
       res = await generalSign()
-      setStatus(res)
     } else {
       res = await photoSign()
-      setStatus(res)
     }
     document.getElementById('sign-btn').disabled = 'disabled'
     let neum_form = document.getElementsByClassName('neum-form')[0]
@@ -158,11 +156,11 @@ function DashBoard(props) {
     setTimeout(() => {
       content.style.display = 'none'
       neum_form.classList.add('form-height')
+      setStatus(res)
     }, 600)
   }
   const onSign_2 = async () => {
     let res = await qrcodeSign(values['enc'])
-    setStatus(res)
     document.getElementById('sign-btn').disabled = 'disabled'
     let neum_form = document.getElementsByClassName('neum-form')[0]
     let content = document.getElementById('neum-form-content')
@@ -170,6 +168,7 @@ function DashBoard(props) {
     setTimeout(() => {
       content.style.display = 'none'
       neum_form.classList.add('form-height')
+      setStatus(res)
     }, 600)
   }
   const getEncFromFile = (file) => {
@@ -200,19 +199,18 @@ function DashBoard(props) {
       Number(values['latlon'].substring(values['latlon'].indexOf(',') + 1, values['latlon'].length)),
       Number(values['latlon'].substring(0, values['latlon'].indexOf(','))),
       values['address'])
-    setStatus(res)
-    document.getElementById('sign-btn').disabled = 'disabled'
-    let neum_form = document.getElementsByClassName('neum-form')[0]
-    let content = document.getElementById('neum-form-content')
-    content.style.opacity = 0
-    setTimeout(() => {
-      content.style.display = 'none'
-      neum_form.classList.add('form-height')
+      document.getElementById('sign-btn').disabled = 'disabled'
+      let neum_form = document.getElementsByClassName('neum-form')[0]
+      let content = document.getElementById('neum-form-content')
+      content.style.opacity = 0
+      setTimeout(() => {
+        content.style.display = 'none'
+        neum_form.classList.add('form-height')
+        setStatus(res)
     }, 600)
   }
   const onSign_35 = async () => {
     let res = await generalSign()
-    setStatus(res)
     document.getElementById('sign-btn').disabled = 'disabled'
     let neum_form = document.getElementsByClassName('neum-form')[0]
     let content = document.getElementById('neum-form-content')
@@ -220,6 +218,7 @@ function DashBoard(props) {
     setTimeout(() => {
       content.style.display = 'none'
       neum_form.classList.add('form-height')
+      setStatus(res)
     }, 600)
   }
 
