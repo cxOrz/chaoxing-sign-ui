@@ -199,14 +199,14 @@ function DashBoard(props) {
       Number(values['latlon'].substring(values['latlon'].indexOf(',') + 1, values['latlon'].length)),
       Number(values['latlon'].substring(0, values['latlon'].indexOf(','))),
       values['address'])
-      document.getElementById('sign-btn').disabled = 'disabled'
-      let neum_form = document.getElementsByClassName('neum-form')[0]
-      let content = document.getElementById('neum-form-content')
-      content.style.opacity = 0
-      setTimeout(() => {
-        content.style.display = 'none'
-        neum_form.classList.add('form-height')
-        setStatus(res)
+    document.getElementById('sign-btn').disabled = 'disabled'
+    let neum_form = document.getElementsByClassName('neum-form')[0]
+    let content = document.getElementById('neum-form-content')
+    content.style.opacity = 0
+    setTimeout(() => {
+      content.style.display = 'none'
+      neum_form.classList.add('form-height')
+      setStatus(res)
     }, 600)
   }
   const onSign_35 = async () => {
@@ -225,38 +225,42 @@ function DashBoard(props) {
   useEffect(() => {
     let request = indexedDB.open('ui')
     request.onsuccess = () => {
-      // 判断登录时间，进行重新认证
-      let db = request.result.transaction('user', 'readwrite').objectStore('user')
+      let db = request.result
       // 获取用户登录时间
-      db.get(params.phone).onsuccess = async (event) => {
-        setUserParams(event.target.result)
-        // 身份过期自动重新登陆
-        if (Date.now() - event.target.result.date > 432000000) {
-          let res = await axios.post(login_api, {
-            phone: event.target.result.phone,
-            password: event.target.result.password
-          })
-          if (res.data === 'AuthFailed') {
-            setAlert({ msg: '重新登录失败', show: true, severity: 'error' })
-          } else {
-            setUserParams(event.target.result)
-            // 登陆成功将新信息写入数据库
-            db.put({
+      db.transaction('user', 'readwrite')
+        .objectStore('user')
+        .get(params.phone)
+        .onsuccess = async (event) => {
+          // 数据读取成功
+          setUserParams(event.target.result)
+          // 身份过期自动重新登陆
+          if (Date.now() - event.target.result.date > 432000000) {
+            let res = await axios.post(login_api, {
               phone: event.target.result.phone,
-              fid: res.data.fid,
-              vc3: res.data.vc3,
-              password: event.target.result.password,
-              _uid: res.data._uid,
-              _d: res.data._d,
-              uf: res.data.uf,
-              name: res.data.name,
-              date: new Date()
-            }).onsuccess = () => {
-              setAlert({ msg: '凭证已自动更新', show: true, severity: 'success' })
+              password: event.target.result.password
+            })
+            if (res.data === 'AuthFailed') {
+              setAlert({ msg: '重新登录失败', show: true, severity: 'error' })
+            } else {
+              setUserParams(event.target.result)
+              // 登陆成功将新信息写入数据库
+              db.transaction('user', 'readwrite')
+                .objectStore('user').put({
+                  phone: event.target.result.phone,
+                  fid: res.data.fid,
+                  vc3: res.data.vc3,
+                  password: event.target.result.password,
+                  _uid: res.data._uid,
+                  _d: res.data._d,
+                  uf: res.data.uf,
+                  name: res.data.name,
+                  date: new Date()
+                }).onsuccess = () => {
+                  setAlert({ msg: '凭证已自动更新', show: true, severity: 'success' })
+                }
             }
           }
         }
-      }
     }
   }, [])
 
