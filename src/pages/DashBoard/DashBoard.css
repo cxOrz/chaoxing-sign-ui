@@ -9,10 +9,18 @@
   color: #4c5e6d !important;
   transition: 0.3s;
 }
+
 .neum-button:hover {
   transform: scale(1.05);
   background: #e9eef1;
   transition: 0.3s;
+}
+
+.text-button {
+  padding: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  direction: rtl;
 }
 
 .hidden {
@@ -43,9 +51,11 @@
   box-shadow: 16px 16px 32px #c9cccf, -16px -16px 32px #ffffff;
   transition: 0.8s;
 }
+
 .form-height {
   min-height: 100px !important;
 }
+
 .neum-form-button {
   height: 60px;
   width: 135px;
@@ -72,6 +82,7 @@
   background-size: 70%;
   box-shadow: inset 2px 2px 3px #d7dadd, inset -2px -2px 3px #ffffff;
 }
+
 .unchecked::before {
   display: inline-block;
   vertical-align: bottom;

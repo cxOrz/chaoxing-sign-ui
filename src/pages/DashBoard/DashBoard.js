@@ -349,7 +349,7 @@ function DashBoard(props) {
                   width: '16rem'
                 }}
               >
-                <div id='select-photo'>选择图片</div>
+                <div id='select-photo' className='text-button'>选择图片</div>
                 <input
                   style={{
                     display: 'none'
@@ -359,7 +359,12 @@ function DashBoard(props) {
                   accept='image/*'
                   onChange={async (e) => {
                     let select_photo = document.getElementById('select-photo')
-                    select_photo.innerText = e.target.value
+                    if (e.target.value === '') {
+                      select_photo.innerText = '选择图片'
+                    }
+                    else {
+                      select_photo.innerText = e.target.value
+                    }
                     updateValue('photo', e.target.files[0])
                   }}></input>
               </ButtonBase>
