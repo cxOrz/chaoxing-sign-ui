@@ -17,6 +17,7 @@ function DashBoard(props) {
     status: ''
   })
   const [progress, setProgress] = useState(false)
+  const [btnProgress, setBtnProgress] = useState(false)
   const [radio, setRadio] = useState(0)
   const [values, setValues] = useState({})
   const [alert, setAlert] = useState({ msg: '', show: false, severity: 'info' })
@@ -151,6 +152,7 @@ function DashBoard(props) {
     if (document.getElementById('general').checked) {
       res = await generalSign()
     } else {
+      setBtnProgress(true)
       // 获取uvtoken
       let token = await getuvToken()
       // 上传文件，获取上传结果
@@ -158,6 +160,7 @@ function DashBoard(props) {
       console.log(result_upload)
       // 传入objectId进行签到
       res = await photoSign(result_upload.objectId)
+      setBtnProgress(false)
     }
     document.getElementById('sign-btn').disabled = 'disabled'
     let neum_form = document.getElementsByClassName('neum-form')[0]
@@ -317,7 +320,6 @@ function DashBoard(props) {
       {
         progress &&
         <CircularProgress size='5rem' />
-
       }
       <h1>{sign.activity.name}</h1>
       {
@@ -373,8 +375,11 @@ function DashBoard(props) {
               id='sign-btn'
               onClick={onSign_0}
               className='neum-form-button'
-              disableRipple
-            >签到</ButtonBase>
+              disableRipple>
+              {
+                btnProgress ? <CircularProgress size='2rem' /> : '签到'
+              }
+            </ButtonBase>
           </div>
         </Box>
       }
