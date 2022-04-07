@@ -35,7 +35,7 @@
 .neum-form {
   color: #4c5e6d !important;
   min-height: 300px;
-  min-width: 200px;
+  min-width: 250px;
   max-width: 300px;
   padding: 2rem;
   border-radius: 20px;
@@ -49,7 +49,7 @@
 .neum-form-button {
   height: 60px;
   width: 135px;
-  margin: 3rem auto 2rem !important;
+  margin: 3rem auto 0 !important;
   font-size: 1.25rem;
   font-weight: 600;
   color: #4c5e6d !important;

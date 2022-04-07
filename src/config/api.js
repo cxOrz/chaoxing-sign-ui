@@ -11,3 +11,7 @@ export const photo_api = baseUrl + '/photo'
 export const qrcode_api = baseUrl + '/qrcode'
 
 export const location_api = baseUrl + '/location'
+
+export const uvtoken_api = baseUrl + '/uvtoken'
+
+export const upload_api = baseUrl + '/upload'

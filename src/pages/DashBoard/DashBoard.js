@@ -4,7 +4,7 @@ import axios from 'axios'
 import QrCode from "qrcode-reader"
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { activity_api, general_api, login_api, location_api, qrcode_api, photo_api } from '../../config/api'
+import { activity_api, general_api, login_api, location_api, qrcode_api, photo_api, upload_api, uvtoken_api } from '../../config/api'
 import './DashBoard.css'
 
 function DashBoard(props) {
@@ -17,6 +17,7 @@ function DashBoard(props) {
     status: ''
   })
   const [progress, setProgress] = useState(false)
+  const [radio, setRadio] = useState(0)
   const [values, setValues] = useState({})
   const [alert, setAlert] = useState({ msg: '', show: false, severity: 'info' })
 
@@ -59,7 +60,7 @@ function DashBoard(props) {
     })
     return result.data
   }
-  const photoSign = async () => {
+  const photoSign = async (objectId) => {
     let result = await axios.post(photo_api, {
       uf: userParams.uf,
       _d: userParams._d,
@@ -67,7 +68,8 @@ function DashBoard(props) {
       uid: userParams._uid,
       fid: userParams.fid,
       aid: sign.activity.aid,
-      name: userParams.name
+      name: userParams.name,
+      objectId: objectId
     })
     return result.data
   }
@@ -107,12 +109,14 @@ function DashBoard(props) {
       case 'general': {
         label_general.className = 'checked'
         label_photo.className = 'unchecked'
+        setRadio(0)
         break
       }
       case 'photo': {
         label_general.className = 'unchecked'
         label_photo.className = 'checked'
         setAlert({ msg: '确保已将照片上传指定位置，点击签到', severity: 'info', show: true })
+        setRadio(1)
         break
       }
       default: break
@@ -147,7 +151,13 @@ function DashBoard(props) {
     if (document.getElementById('general').checked) {
       res = await generalSign()
     } else {
-      res = await photoSign()
+      // 获取uvtoken
+      let token = await getuvToken()
+      // 上传文件，获取上传结果
+      let result_upload = await uploadFile(values['photo'], token)
+      console.log(result_upload)
+      // 传入objectId进行签到
+      res = await photoSign(result_upload.objectId)
     }
     document.getElementById('sign-btn').disabled = 'disabled'
     let neum_form = document.getElementsByClassName('neum-form')[0]
@@ -220,6 +230,32 @@ function DashBoard(props) {
       neum_form.classList.add('form-height')
       setStatus(res)
     }, 600)
+  }
+  const getuvToken = async () => {
+    let token = await axios.post(uvtoken_api, {
+      uf: userParams.uf,
+      _d: userParams._d,
+      vc3: userParams.vc3,
+      uid: userParams._uid
+    })
+    return token.data._token
+  }
+  const uploadFile = async (inputFile, token) => {
+    // 填入FormData
+    let data = new FormData()
+    data.append('uf', userParams.uf)
+    data.append('_d', userParams._d)
+    data.append('_uid', userParams._uid)
+    data.append('vc3', userParams.vc3)
+    data.append('file', inputFile)
+
+    // 使用Token传文件，返回objectId
+    let res = await axios.post(upload_api + `?_token=${token}`, data, {
+      headers: {
+        'Content-type': 'multipart/form-data'
+      }
+    })
+    return res.data
   }
 
   useEffect(() => {
@@ -303,6 +339,31 @@ function DashBoard(props) {
               &nbsp;拍照
             </label>
             <br />
+            {
+              radio === 1 &&
+              <ButtonBase className='neum-form-button'
+                onClick={() => {
+                  document.getElementById('input-photo').click()
+                }}
+                sx={{
+                  width: '16rem'
+                }}
+              >
+                <div id='select-photo'>选择图片</div>
+                <input
+                  style={{
+                    display: 'none'
+                  }}
+                  id='input-photo'
+                  type='file'
+                  accept='image/*'
+                  onChange={async (e) => {
+                    let select_photo = document.getElementById('select-photo')
+                    select_photo.innerText = e.target.value
+                    updateValue('photo', e.target.files[0])
+                  }}></input>
+              </ButtonBase>
+            }
             <ButtonBase
               id='sign-btn'
               onClick={onSign_0}
