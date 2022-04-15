@@ -1,13 +1,13 @@
 import { Alert, ButtonBase, CircularProgress, Snackbar } from '@mui/material'
 import { Box } from '@mui/system'
 import axios from 'axios'
-import QrCode from "qrcode-reader"
+import { Decoder } from '@nuintun/qrcode'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { activity_api, general_api, login_api, location_api, qrcode_api, photo_api, upload_api, uvtoken_api } from '../../config/api'
 import './DashBoard.css'
 
-function DashBoard(props) {
+function DashBoard() {
   const params = useParams()
   const [userParams, setUserParams] = useState()
   const [sign, setSign] = useState({
@@ -185,18 +185,17 @@ function DashBoard(props) {
     }, 600)
   }
   const getEncFromFile = (file) => {
-    return new Promise((resolve, reject) => {
-      const qr = new QrCode()
-      qr.callback = function (err, value) {
-        if (value) resolve(value.result.split('=').pop())
-        else resolve('')
-      }
-      const reader = new FileReader()
-      reader.addEventListener("load", () => {
-        const src = reader.result
-        qr.decode(src)
+    return new Promise((resolve) => {
+      const url = window.URL || window.webkitURL
+      const img = new Image()
+      const qrcode = new Decoder()
+      img.src = url.createObjectURL(file)
+      qrcode.scan(img.src).then(result => {
+        resolve(result.data.split('=').pop())
+      }).catch((reason) => {
+        console.log(reason)
+        resolve('')
       })
-      reader.readAsDataURL(file)
     })
   }
   const setEncByQRCodeImage = async (event) => {
