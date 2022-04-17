@@ -17,7 +17,6 @@ function Start() {
 
   const login = async () => {
     loginBtn.current.disabled = 'disabled'
-    console.log('disbaled')
     let res = await axios.post(login_api, {
       phone: phone.current.value,
       password: password.current.value
@@ -112,7 +111,6 @@ function Start() {
           height: 165,
           marginBottom: 3.5,
           marginRight: 3.5
-
         }}
         className='neum-card'
         onClick={() => { setOpen(true) }}

@@ -7,7 +7,7 @@ function App() {
   const navigate = useNavigate()
   return (
     <div className="App">
-      <ButtonBase onClick={() => { navigate('/') }} sx={{
+      <ButtonBase onClick={() => { navigate('/', { replace: true }) }} sx={{
         border: 10,
         borderRadius: '50%',
         height: '40px',
