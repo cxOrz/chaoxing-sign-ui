@@ -15,3 +15,5 @@ export const location_api = baseUrl + '/location'
 export const uvtoken_api = baseUrl + '/uvtoken'
 
 export const upload_api = baseUrl + '/upload'
+
+export const ocr_api = baseUrl + '/qrocr'

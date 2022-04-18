@@ -4,7 +4,7 @@ import axios from 'axios'
 import { Decoder } from '@nuintun/qrcode'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { activity_api, general_api, login_api, location_api, qrcode_api, photo_api, upload_api, uvtoken_api } from '../../config/api'
+import { activity_api, general_api, login_api, location_api, qrcode_api, photo_api, upload_api, uvtoken_api, ocr_api } from '../../config/api'
 import './DashBoard.css'
 
 function DashBoard() {
@@ -184,7 +184,8 @@ function DashBoard() {
       setStatus(res)
     }, 600)
   }
-  const getEncFromFile = (file) => {
+  // [默认] 使用浏览器解析ENC，成功率较低
+  const parseEnc = (file) => {
     return new Promise((resolve) => {
       const url = window.URL || window.webkitURL
       const img = new Image()
@@ -198,10 +199,21 @@ function DashBoard() {
       })
     })
   }
+  // [推荐] 使用腾讯云OCR解析ENC，请在cli项目中配置secretId和secretKey
+  // const parseEnc = async (inputFile) => {
+  //   let data = new FormData()
+  //   data.append("file", inputFile)
+  //   let res = await axios.post(ocr_api, data, {
+  //     headers: {
+  //       'Content-type': 'multipart/form-data'
+  //     }
+  //   })
+  //   return res.data
+  // }
   const setEncByQRCodeImage = async (event) => {
     const image = event.target.files[0]
     // 对图片文件进行解析获得enc
-    const enc = await getEncFromFile(image)
+    const enc = await parseEnc(image)
     values['enc'] = enc
     const encInput = document.getElementById('input-enc')
     encInput.setAttribute('value', enc)
