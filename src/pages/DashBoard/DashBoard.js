@@ -195,7 +195,7 @@ function DashBoard() {
         resolve(result.data.split('=').pop())
       }).catch((reason) => {
         console.log(reason)
-        resolve('')
+        resolve('识别失败')
       })
     })
   }

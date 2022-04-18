@@ -10,17 +10,19 @@
 
 安装依赖，如果时间太长请尝试挂代理或使用淘宝源。
 
-### `yarn start `
+### `yarn start`
 
 启动开发服务器。不要忘记把接口服务(另一个仓库)也运行起来。
 
-### `yarn build `
+### `yarn build`
 
 构建项目，输出到 build 文件夹。
 
 ## 配置
 
-`src/config/api.js` ：该文件中配置 `baseUrl` 变量为接口地址，默认 `http://localhost:5000`。
+`src/config/api.js` ：该文件中配置 `baseUrl` 变量为接口地址，默认 `http://localhost:5000` 。若接口部署在服务器，不要忘记将接口地址改为服务器IP或绑定的域名。
+
+`src/pages/DashBoard/DashBoard.js` ：若使用腾讯云的通用文字识别服务，二维码识别成功率极高，查看此源码文件中的 parseEnc 函数，可注释掉默认识别函数，使用推荐的函数，同时需要在CLI项目中的 `src/functions/tencent/QrCodeOCR.js` 配置 `secretId` 和 `secretKey`。
 
 ## 贡献
 
