@@ -70,8 +70,9 @@ function Start() {
           if (cursor) {
             // console.log(cursor.key)
             // console.log(cursor.value)
+            let userValue  =cursor.value // 在safari中需要将参数值存到变量，再传给setState不然undefined
             setUser((prev) => {
-              return [...prev, cursor.value]
+              return [...prev, userValue]
             })
             cursor.continue()
           }
