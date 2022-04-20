@@ -1,6 +1,6 @@
 {
   "name": "chaoxing-sign-ui",
-  "version": "1.5.5",
+  "version": "1.5.7",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.8.2",

@@ -89,7 +89,7 @@ function Start() {
   }, [])
 
   return (
-    <div>
+    <div className='start-box'>
       <h1>让我们开始吧</h1>
       <p className='hint'>你可以选择或添加一个用户</p>
       {
