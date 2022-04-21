@@ -18,6 +18,7 @@ function DashBoard() {
   })
   const [progress, setProgress] = useState(false)
   const [btnProgress, setBtnProgress] = useState(false)
+  const [scanProgress, setScanProgress] = useState(false)
   const [radio, setRadio] = useState(0)
   const [values, setValues] = useState({})
   const [alert, setAlert] = useState({ msg: '', show: false, severity: 'info' })
@@ -185,38 +186,40 @@ function DashBoard() {
     }, 600)
   }
   // [默认] 使用浏览器解析ENC，成功率较低
-  const parseEnc = (file) => {
-    return new Promise((resolve) => {
-      const url = window.URL || window.webkitURL
-      const img = new Image()
-      const qrcode = new Decoder()
-      img.src = url.createObjectURL(file)
-      qrcode.scan(img.src).then(result => {
-        resolve(result.data.split('=').pop())
-      }).catch((reason) => {
-        console.log(reason)
-        resolve('识别失败')
-      })
-    })
-  }
-  // [推荐] 使用腾讯云OCR解析ENC，请在cli项目中配置secretId和secretKey
-  // const parseEnc = async (inputFile) => {
-  //   let data = new FormData()
-  //   data.append("file", inputFile)
-  //   let res = await axios.post(ocr_api, data, {
-  //     headers: {
-  //       'Content-type': 'multipart/form-data'
-  //     }
+  // const parseEnc = (file) => {
+  //   return new Promise((resolve) => {
+  //     const url = window.URL || window.webkitURL
+  //     const img = new Image()
+  //     const qrcode = new Decoder()
+  //     img.src = url.createObjectURL(file)
+  //     qrcode.scan(img.src).then(result => {
+  //       resolve(result.data.split('=').pop())
+  //     }).catch((reason) => {
+  //       console.log(reason)
+  //       resolve('识别失败')
+  //     })
   //   })
-  //   return res.data
   // }
+  // [推荐] 使用腾讯云OCR解析ENC，请在cli项目中配置secretId和secretKey
+  const parseEnc = async (inputFile) => {
+    let data = new FormData()
+    data.append("file", inputFile)
+    let res = await axios.post(ocr_api, data, {
+      headers: {
+        'Content-type': 'multipart/form-data'
+      }
+    })
+    return res.data
+  }
   const setEncByQRCodeImage = async (event) => {
     const image = event.target.files[0]
+    setScanProgress(true)
     // 对图片文件进行解析获得enc
     const enc = await parseEnc(image)
     values['enc'] = enc
     const encInput = document.getElementById('input-enc')
     encInput.setAttribute('value', enc)
+    setScanProgress(false)
   }
   const onSign_4 = async () => {
     let res = await locationSign(
@@ -418,7 +421,9 @@ function DashBoard() {
                 width: '16rem'
               }}
             >
-              <div>扫描图片</div>
+              {
+                scanProgress ? <CircularProgress size='2rem' /> : <div>扫描图片</div>
+              }
               <input
                 style={{
                   display: 'none'
