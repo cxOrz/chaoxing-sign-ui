@@ -1,8 +1,8 @@
 # chaoxing-sign-ui
 
-基于 React.js, 使用 Material UI 组件库构建。作为 [chaoxing-sign-cli](https://github.com/miaochenxi/chaoxing-sign-cli) 的客户端，欢迎对本仓库代码进行二次开发。
+基于 React.js, 使用 Material UI 组件库构建。作为 [chaoxing-sign-cli](https://github.com/cxOrz/chaoxing-sign-cli) 的客户端，欢迎对本仓库代码进行二次开发。
 
->注意：本页面只针对本项目进行介绍，如需搭配服务端使用，请移步 [这里](https://github.com/miaochenxi/chaoxing-sign-cli#%E8%BF%90%E8%A1%8C%E6%8E%A5%E5%8F%A3%E6%9C%8D%E5%8A%A1) 。
+>注意：本页面只针对本项目进行介绍，如需搭配服务端使用，请移步 [这里](https://github.com/cxOrz/chaoxing-sign-cli#%E8%BF%90%E8%A1%8C%E6%8E%A5%E5%8F%A3%E6%9C%8D%E5%8A%A1) 。
 
 ## 运行
 
