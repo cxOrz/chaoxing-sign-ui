@@ -2,7 +2,7 @@
 
 基于 React.js, 使用 Material UI 组件库构建。作为 [chaoxing-sign-cli](https://github.com/cxOrz/chaoxing-sign-cli) 的客户端，欢迎对本仓库代码进行二次开发。
 
->注意：本页面只针对本项目进行介绍，如需搭配服务端使用，请移步 [这里](https://github.com/cxOrz/chaoxing-sign-cli#%E8%BF%90%E8%A1%8C%E6%8E%A5%E5%8F%A3%E6%9C%8D%E5%8A%A1) 。
+> 注意：本页面只针对本项目进行介绍，如需搭配服务端使用，请移步 [这里](https://github.com/cxOrz/chaoxing-sign-cli#%E8%BF%90%E8%A1%8C%E6%8E%A5%E5%8F%A3%E6%9C%8D%E5%8A%A1) 。
 
 ## 运行
 
@@ -12,17 +12,17 @@
 
 ### `yarn start`
 
-启动开发服务器。不要忘记把接口服务(另一个仓库)也运行起来。
+启动开发服务器，不要忘记把接口服务(另一个仓库)也运行起来。
 
 ### `yarn build`
 
-构建项目，输出到 build 文件夹。
+构建项目，输出到 build 文件夹，然后拿去部署。
 
 ## 配置
 
 `src/config/api.js` ：该文件中配置 `baseUrl` 变量为接口地址，默认 `http://localhost:5000` 。若接口部署在服务器，不要忘记将接口地址改为服务器IP或绑定的域名。
 
-`src/pages/DashBoard/DashBoard.js` ：若使用腾讯云的通用文字识别服务，二维码识别成功率极高，查看此源码文件中的 parseEnc 函数，可注释掉默认识别函数，使用推荐的函数，同时需要在CLI项目中的 `src/functions/tencent/QrCodeOCR.js` 配置 `secretId` 和 `secretKey`。
+`src/pages/DashBoard/DashBoard.js` ：若使用腾讯云的通用文字识别服务，二维码识别成功率极高，支持PNG、JPG、JPEG、PDF等格式，图片大小不能超过7M。查看此源码文件中的 parseEnc 函数，可注释掉默认识别函数，使用推荐的函数，同时需要在CLI项目中的 `src/functions/tencent/QrCodeOCR.js` 配置 `secretId` 和 `secretKey`。
 
 ## 贡献
 
