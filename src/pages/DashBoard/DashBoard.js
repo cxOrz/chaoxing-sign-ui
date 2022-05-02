@@ -295,20 +295,22 @@ function DashBoard() {
             if (res.data === 'AuthFailed') {
               setAlert({ msg: '重新登录失败', show: true, severity: 'error' })
             } else {
-              setUserParams(event.target.result)
+              let userParam = {
+                phone: event.target.result.phone,
+                fid: res.data.fid,
+                vc3: res.data.vc3,
+                password: event.target.result.password,
+                _uid: res.data._uid,
+                _d: res.data._d,
+                uf: res.data.uf,
+                name: res.data.name,
+                date: new Date()
+              }
+              setUserParams(userParam)
               // 登陆成功将新信息写入数据库
               db.transaction('user', 'readwrite')
-                .objectStore('user').put({
-                  phone: event.target.result.phone,
-                  fid: res.data.fid,
-                  vc3: res.data.vc3,
-                  password: event.target.result.password,
-                  _uid: res.data._uid,
-                  _d: res.data._d,
-                  uf: res.data.uf,
-                  name: res.data.name,
-                  date: new Date()
-                }).onsuccess = () => {
+                .objectStore('user').put(userParam)
+                .onsuccess = () => {
                   setAlert({ msg: '凭证已自动更新', show: true, severity: 'success' })
                 }
             }
