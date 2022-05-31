@@ -1,16 +1,35 @@
-import { Alert, ButtonBase, CircularProgress, Snackbar } from '@mui/material'
-import { Box } from '@mui/system'
-import axios from 'axios'
-import { Decoder } from '@nuintun/qrcode'
 import React, { useEffect, useState } from 'react'
+import axios from 'axios'
+import { Box } from '@mui/system'
+import { Decoder } from '@nuintun/qrcode'
 import { useParams } from 'react-router-dom'
 import { activity_api, general_api, login_api, location_api, qrcode_api, photo_api, upload_api, uvtoken_api, ocr_api } from '../../config/api'
+import { Alert, ButtonBase, CircularProgress, Snackbar } from '@mui/material'
 import './DashBoard.css'
+import { UserParamsType } from '../../types/global'
+import { AlertColor } from '@mui/material'
+
+interface SignInfo {
+  activity: Activity
+  status: string;
+}
+interface Activity {
+  name: string;
+  aid?: string | number;
+  courseId?: string | number;
+  classId?: string | number;
+  otherId?: string | number;
+}
+interface AlertInfo {
+  msg: string;
+  show: boolean;
+  severity: AlertColor;
+}
 
 function DashBoard() {
   const params = useParams()
-  const [userParams, setUserParams] = useState()
-  const [sign, setSign] = useState({
+  const [userParams, setUserParams] = useState<UserParamsType>({} as UserParamsType)
+  const [sign, setSign] = useState<SignInfo>({
     activity: {
       name: ''
     },
@@ -20,8 +39,8 @@ function DashBoard() {
   const [btnProgress, setBtnProgress] = useState(false)
   const [scanProgress, setScanProgress] = useState(false)
   const [radio, setRadio] = useState(0)
-  const [values, setValues] = useState({})
-  const [alert, setAlert] = useState({ msg: '', show: false, severity: 'info' })
+  const [values, setValues] = useState<{ [index: string]: string | File }>({})
+  const [alert, setAlert] = useState<AlertInfo>({ msg: '', show: false, severity: 'info' })
 
   const [control, setControl] = useState({
     start: {
@@ -30,7 +49,7 @@ function DashBoard() {
   })
 
   const start = async () => {
-    document.getElementById('start-btn').classList.add('hidden')
+    document.getElementById('start-btn')!.classList.add('hidden')
     setTimeout(() => {
       setControl({ start: { show: false } })
       setProgress(true)
@@ -44,9 +63,9 @@ function DashBoard() {
     console.log(activity.data)
     setProgress(false)
     if (activity.data === 'NoActivity') {
-      setSign({ activity: { name: '无签到活动' } })
+      setSign({ activity: { name: '无签到活动' }, status: '' })
     } else {
-      setSign({ activity: activity.data })
+      setSign({ activity: (activity.data as Activity), status: '' })
     }
   }
 
@@ -62,7 +81,7 @@ function DashBoard() {
     })
     return result.data
   }
-  const photoSign = async (objectId) => {
+  const photoSign = async (objectId: string) => {
     let result = await axios.post(photo_api, {
       uf: userParams.uf,
       _d: userParams._d,
@@ -75,7 +94,7 @@ function DashBoard() {
     })
     return result.data
   }
-  const qrcodeSign = async (enc) => {
+  const qrcodeSign = async (enc: string) => {
     let result = await axios.post(qrcode_api, {
       uf: userParams.uf,
       _d: userParams._d,
@@ -88,7 +107,7 @@ function DashBoard() {
     })
     return result.data
   }
-  const locationSign = async (lat, lon, address) => {
+  const locationSign = async (lat: string, lon: string, address: string) => {
     let result = await axios.post(location_api, {
       uf: userParams.uf,
       _d: userParams._d,
@@ -104,19 +123,19 @@ function DashBoard() {
     return result.data
   }
 
-  const handleRadio = (type) => {
+  const handleRadio = (type: 'general' | 'photo') => {
     let label_general = document.getElementById('label-general')
     let label_photo = document.getElementById('label-photo')
     switch (type) {
       case 'general': {
-        label_general.className = 'checked'
-        label_photo.className = 'unchecked'
+        label_general!.className = 'checked'
+        label_photo!.className = 'unchecked'
         setRadio(0)
         break
       }
       case 'photo': {
-        label_general.className = 'unchecked'
-        label_photo.className = 'checked'
+        label_general!.className = 'unchecked'
+        label_photo!.className = 'checked'
         setAlert({ msg: '确保已将照片上传指定位置，点击签到', severity: 'info', show: true })
         setRadio(1)
         break
@@ -124,14 +143,14 @@ function DashBoard() {
       default: break
     }
   }
-  const updateValue = (name, value) => {
+  const updateValue = (name: string, value: string | File) => {
     setValues((prev) => {
       let object = { ...prev }
       object[name] = value
       return object
     })
   }
-  const setStatus = (res) => {
+  const setStatus = (res: string) => {
     if (res === 'success') {
       setSign((prev) => {
         return {
@@ -149,101 +168,100 @@ function DashBoard() {
     }
   }
   const onSign_0 = async () => {
-    let res
-    if (document.getElementById('general').checked) {
+    let res: string
+    if ((document.getElementById('general') as HTMLInputElement)!.checked) {
       res = await generalSign()
     } else {
       setBtnProgress(true)
       // 获取uvtoken
       let token = await getuvToken()
       // 上传文件，获取上传结果
-      let result_upload = await uploadFile(values['photo'], token)
+      let result_upload = await uploadFile(values['photo'] as File, token)
       console.log(result_upload)
       // 传入objectId进行签到
       res = await photoSign(result_upload.objectId)
       setBtnProgress(false)
     }
-    document.getElementById('sign-btn').disabled = 'disabled'
+    (document.getElementById('sign-btn') as HTMLButtonElement)!.disabled = true
     let neum_form = document.getElementsByClassName('neum-form')[0]
     let content = document.getElementById('neum-form-content')
-    content.style.opacity = 0
+    content!.style.opacity = '0'
     setTimeout(() => {
-      content.style.display = 'none'
+      content!.style.display = 'none'
       neum_form.classList.add('form-height')
       setStatus(res)
     }, 600)
   }
   const onSign_2 = async () => {
-    let res = await qrcodeSign(values['enc'])
-    document.getElementById('sign-btn').disabled = 'disabled'
+    let res = await qrcodeSign(values['enc'] as string);
+    (document.getElementById('sign-btn') as HTMLButtonElement)!.disabled = true
     let neum_form = document.getElementsByClassName('neum-form')[0]
     let content = document.getElementById('neum-form-content')
-    content.style.opacity = 0
+    content!.style.opacity = '0'
     setTimeout(() => {
-      content.style.display = 'none'
+      content!.style.display = 'none'
       neum_form.classList.add('form-height')
       setStatus(res)
     }, 600)
   }
   // [默认] 使用浏览器解析ENC，成功率较低
-  // const parseEnc = (file) => {
-  //   return new Promise((resolve) => {
-  //     const url = window.URL || window.webkitURL
-  //     const img = new Image()
-  //     const qrcode = new Decoder()
-  //     img.src = url.createObjectURL(file)
-  //     qrcode.scan(img.src).then(result => {
-  //       resolve(result.data.split('=').pop())
-  //     }).catch((reason) => {
-  //       console.log(reason)
-  //       resolve('识别失败')
-  //     })
-  //   })
-  // }
-  // [推荐] 使用腾讯云OCR解析ENC，请在cli项目中配置secretId和secretKey
-  const parseEnc = async (inputFile) => {
-    let data = new FormData()
-    data.append("file", inputFile)
-    let res = await axios.post(ocr_api, data, {
-      headers: {
-        'Content-type': 'multipart/form-data'
-      }
+  const parseEnc = (file: File): Promise<string> => {
+    return new Promise((resolve) => {
+      const url = window.URL || window.webkitURL
+      const img = new Image()
+      const qrcode = new Decoder()
+      img.src = url.createObjectURL(file)
+      qrcode.scan(img.src).then(result => {
+        resolve(result.data.split('=').pop() as string)
+      }).catch((reason) => {
+        console.log(reason)
+        resolve('识别失败')
+      })
     })
-    return res.data
   }
-  const setEncByQRCodeImage = async (event) => {
-    const image = event.target.files[0]
+  // [推荐] 使用腾讯云OCR解析ENC，请在cli项目中配置secretId和secretKey
+  // const parseEnc = async (inputFile: File) => {
+  //   let data = new FormData()
+  //   data.append("file", inputFile)
+  //   let res = await axios.post(ocr_api, data, {
+  //     headers: {
+  //       'Content-type': 'multipart/form-data'
+  //     }
+  //   })
+  //   return res.data
+  // }
+  const setEncByQRCodeImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const image = event.target.files![0]
     setScanProgress(true)
     // 对图片文件进行解析获得enc
     const enc = await parseEnc(image)
     values['enc'] = enc
     const encInput = document.getElementById('input-enc')
-    encInput.setAttribute('value', enc)
+    encInput!.setAttribute('value', enc)
     setScanProgress(false)
   }
   const onSign_4 = async () => {
-    let res = await locationSign(
-      Number(values['latlon'].substring(values['latlon'].indexOf(',') + 1, values['latlon'].length)),
-      Number(values['latlon'].substring(0, values['latlon'].indexOf(','))),
-      values['address'])
-    document.getElementById('sign-btn').disabled = 'disabled'
+    let latlon = values['latlon'] as string, address = values['address'] as string
+    let res = await locationSign(latlon.substring(latlon.indexOf(',') + 1, latlon.length),
+      latlon.substring(0, latlon.indexOf(',')), address);
+    (document.getElementById('sign-btn') as HTMLButtonElement)!.disabled = true
     let neum_form = document.getElementsByClassName('neum-form')[0]
     let content = document.getElementById('neum-form-content')
-    content.style.opacity = 0
+    content!.style.opacity = '0'
     setTimeout(() => {
-      content.style.display = 'none'
+      content!.style.display = 'none'
       neum_form.classList.add('form-height')
       setStatus(res)
     }, 600)
   }
   const onSign_35 = async () => {
-    let res = await generalSign()
-    document.getElementById('sign-btn').disabled = 'disabled'
+    let res = await generalSign();
+    (document.getElementById('sign-btn') as HTMLButtonElement).disabled = true
     let neum_form = document.getElementsByClassName('neum-form')[0]
     let content = document.getElementById('neum-form-content')
-    content.style.opacity = 0
+    content!.style.opacity = '0'
     setTimeout(() => {
-      content.style.display = 'none'
+      content!.style.display = 'none'
       neum_form.classList.add('form-height')
       setStatus(res)
     }, 600)
@@ -257,7 +275,7 @@ function DashBoard() {
     })
     return token.data._token
   }
-  const uploadFile = async (inputFile, token) => {
+  const uploadFile = async (inputFile: File, token: string) => {
     // 填入FormData
     let data = new FormData()
     data.append('uf', userParams.uf)
@@ -280,42 +298,42 @@ function DashBoard() {
     request.onsuccess = () => {
       let db = request.result
       // 获取用户登录时间
-      db.transaction('user', 'readwrite')
+      let request_IDBGET = db.transaction('user', 'readwrite')
         .objectStore('user')
-        .get(params.phone)
-        .onsuccess = async (event) => {
-          // 数据读取成功
-          setUserParams(event.target.result)
-          // 身份过期自动重新登陆
-          if (Date.now() - event.target.result.date > 432000000) {
-            let res = await axios.post(login_api, {
-              phone: event.target.result.phone,
-              password: event.target.result.password
-            })
-            if (res.data === 'AuthFailed') {
-              setAlert({ msg: '重新登录失败', show: true, severity: 'error' })
-            } else {
-              let userParam = {
-                phone: event.target.result.phone,
-                fid: res.data.fid,
-                vc3: res.data.vc3,
-                password: event.target.result.password,
-                _uid: res.data._uid,
-                _d: res.data._d,
-                uf: res.data.uf,
-                name: res.data.name,
-                date: new Date()
-              }
-              setUserParams(userParam)
-              // 登陆成功将新信息写入数据库
-              db.transaction('user', 'readwrite')
-                .objectStore('user').put(userParam)
-                .onsuccess = () => {
-                  setAlert({ msg: '凭证已自动更新', show: true, severity: 'success' })
-                }
+        .get(params.phone as string)
+      request_IDBGET.onsuccess = async (event) => {
+        // 数据读取成功
+        setUserParams(request_IDBGET.result)
+        // 身份过期自动重新登陆
+        if (Date.now() - request_IDBGET.result.date > 432000000) {
+          let res = await axios.post(login_api, {
+            phone: request_IDBGET.result.phone,
+            password: request_IDBGET.result.password
+          })
+          if (res.data === 'AuthFailed') {
+            setAlert({ msg: '重新登录失败', show: true, severity: 'error' })
+          } else {
+            let userParam = {
+              phone: request_IDBGET.result.phone,
+              fid: res.data.fid,
+              vc3: res.data.vc3,
+              password: request_IDBGET.result.password,
+              _uid: res.data._uid,
+              _d: res.data._d,
+              uf: res.data.uf,
+              name: res.data.name,
+              date: new Date()
             }
+            setUserParams(userParam)
+            // 登陆成功将新信息写入数据库
+            db.transaction('user', 'readwrite')
+              .objectStore('user').put(userParam)
+              .onsuccess = () => {
+                setAlert({ msg: '凭证已自动更新', show: true, severity: 'success' })
+              }
           }
         }
+      }
     }
   }, [])
 
@@ -361,7 +379,7 @@ function DashBoard() {
               radio === 1 &&
               <ButtonBase className='neum-form-button'
                 onClick={() => {
-                  document.getElementById('input-photo').click()
+                  document.getElementById('input-photo')!.click()
                 }}
                 sx={{
                   width: '16rem'
@@ -378,12 +396,12 @@ function DashBoard() {
                   onChange={async (e) => {
                     let select_photo = document.getElementById('select-photo')
                     if (e.target.value === '') {
-                      select_photo.innerText = '选择图片'
+                      select_photo!.innerText = '选择图片'
                     }
                     else {
-                      select_photo.innerText = e.target.value
+                      select_photo!.innerText = e.target.value
                     }
-                    updateValue('photo', e.target.files[0])
+                    updateValue('photo', e.target.files![0])
                   }}></input>
               </ButtonBase>
             }
@@ -417,7 +435,7 @@ function DashBoard() {
             }} />
             <ButtonBase className='neum-form-button'
               onClick={() => {
-                document.getElementById('qrcodeUpload').click()
+                document.getElementById('qrcode-upload')!.click()
               }}
               sx={{
                 width: '16rem'
@@ -430,7 +448,7 @@ function DashBoard() {
                 style={{
                   display: 'none'
                 }}
-                id='qrcodeUpload'
+                id='qrcode-upload'
                 type='file'
                 accept='image/*'
                 onChange={setEncByQRCodeImage}></input>
@@ -498,9 +516,9 @@ function DashBoard() {
       <Snackbar
         open={alert.show}
         autoHideDuration={3000}
-        onClose={() => { setAlert({ show: false }) }}
+        onClose={() => { setAlert({ show: false, severity: 'info', msg: '' }) }}
       >
-        <Alert onClose={() => { setAlert({ show: false }) }} severity={alert.severity} sx={{ width: '100%' }}>
+        <Alert onClose={() => { setAlert({ show: false, severity: 'info', msg: '' }) }} severity={alert.severity} sx={{ width: '100%' }}>
           {alert.msg}
         </Alert>
       </Snackbar>

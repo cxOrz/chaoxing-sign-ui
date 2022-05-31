@@ -4,9 +4,9 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import Start from './pages/Start/Start';
-import DashBoard from './pages/DashBoard/DashBoard.js';
+import DashBoard from './pages/DashBoard/DashBoard';
 
-const container = document.getElementById('root')
+const container = document.getElementById('root') as HTMLElement
 const root = createRoot(container)
 
 root.render(

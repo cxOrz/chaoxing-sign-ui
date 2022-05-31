@@ -1,24 +1,34 @@
 import { Delete } from '@mui/icons-material'
 import { Typography, Card, CardContent, CardActionArea, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material'
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './UserCard.css'
 
-function UserCard(props) {
-  const phoneStr = `${props.phone.substr(0, 3)} **** **${props.phone.substr(9, 2)}`
+interface UserCardProps {
+  indb: IDBDatabase;
+  name: string;
+  phone: string;
+  date: string;
+}
+
+function UserCard(props: UserCardProps) {
+  const phoneStr = `${props.phone.substring(0, 3)} **** **${props.phone.substring(9)}`
   const navigate = useNavigate()
-  const [contextMenu, setContextMenu] = React.useState(null)
+  const [contextMenu, setContextMenu] = useState<{
+    mouseX: number;
+    mouseY: number;
+  } | null>(null)
 
   const removeUser = () => {
     let request = props.indb.transaction('user', 'readwrite').objectStore('user').delete(props.phone)
-    request.onsuccess = (event)=>{
+    request.onsuccess = (event) => {
       console.log('用户已被移除')
       handleClose()
       window.location.reload()
     }
   }
 
-  const handleContextMenu = (event) => {
+  const handleContextMenu = (event: React.MouseEvent) => {
     event.preventDefault()
     setContextMenu(
       contextMenu === null

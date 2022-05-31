@@ -1,35 +1,38 @@
+import React, { useEffect, useRef, useState } from 'react'
+import axios from 'axios'
 import { AddCircleOutlineOutlined } from '@mui/icons-material'
 import { Button, ButtonBase, Icon, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Snackbar, Alert } from '@mui/material'
-import axios from 'axios'
-import React, { createRef, useEffect, useRef, useState } from 'react'
 import UserCard from '../../components/UserCard/UserCard'
 import { login_api } from '../../config/api'
+import { UserParamsType } from '../../types/global'
 import './Start.css'
 
+type UserListType = UserParamsType[]
+
 function Start() {
-  const [indb, setIndb] = useState(null)
+  const [indb, setIndb] = useState<IDBDatabase>()
   const [open, setOpen] = useState(false)
   const [message, setMessage] = useState(false)
-  const [user, setUser] = useState([])
-  const loginBtn = useRef(null)
-  const phone = createRef()
-  const password = createRef()
+  const [user, setUser] = useState<UserListType>([])
+  const loginBtn = useRef<HTMLButtonElement>(null)
+  const phone = useRef<HTMLInputElement>(null)
+  const password = useRef<HTMLInputElement>(null)
 
   const login = async () => {
-    loginBtn.current.disabled = 'disabled'
+    loginBtn.current!.disabled = true
     let res = await axios.post(login_api, {
-      phone: phone.current.value,
-      password: password.current.value
+      phone: phone.current!.value,
+      password: password.current!.value
     })
-    let phoneNum = phone.current.value
-    let userPwd = password.current.value
-    loginBtn.current.removeAttribute('disabled')
+    let phoneNum = phone.current!.value
+    let userPwd = password.current!.value
+    loginBtn.current!.removeAttribute('disabled')
     // 登陆成功
     if (res.data !== 'AuthFailed') {
       setOpen(false)
 
       // 写入数据库
-      let request = indb.transaction(['user'], 'readwrite')
+      let request = indb!.transaction(['user'], 'readwrite')
         .objectStore('user')
         .put({
           phone: phoneNum, // 手机号
@@ -62,25 +65,25 @@ function Start() {
     // 打开成功
     request.onsuccess = (event) => {
       console.log("数据库打开成功")
-      setIndb(event.target.result)
+      setIndb(request.result)
       // 遍历全部数据
-      event.target.result.transaction('user', 'readwrite').objectStore('user')
-        .openCursor().onsuccess = (event) => {
-          let cursor = event.target.result
-          if (cursor) {
-            // console.log(cursor.key)
-            // console.log(cursor.value)
-            let userValue  =cursor.value // 在safari中需要将参数值存到变量，再传给setState不然undefined
-            setUser((prev) => {
-              return [...prev, userValue]
-            })
-            cursor.continue()
-          }
+      const cursor_request = request.result.transaction('user', 'readwrite').objectStore('user').openCursor()
+      cursor_request.onsuccess = (event) => {
+        let cursor = cursor_request.result
+        if (cursor) {
+          // console.log(cursor.key)
+          // console.log(cursor.value)
+          let userValue = cursor.value // 在safari中需要将参数值存到变量，再传给setState不然undefined
+          setUser((prev) => {
+            return [...prev, userValue]
+          })
+          cursor.continue()
         }
+      }
     }
     // 是否创建数据表
     request.onupgradeneeded = (event) => {
-      let db = event.currentTarget.result
+      let db = request.result
       if (!db.objectStoreNames.contains('ui')) {
         db.createObjectStore('user', { keyPath: 'phone' })
         console.log('数据表已创建')
@@ -96,12 +99,12 @@ function Start() {
         // 渲染所有用户卡片
         user.map((e, i) => {
           return (<UserCard
-            indb={indb}
+            indb={indb as IDBDatabase}
             key={i}
             name={e.name}
             phone={e.phone}
             date={new Date(e.date).toLocaleString()}
-          ></UserCard>)
+          />)
         })
       }
       <ButtonBase
