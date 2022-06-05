@@ -49,18 +49,21 @@ function DashBoard() {
   })
 
   const start = async () => {
+    let activity: any
     document.getElementById('start-btn')!.classList.add('hidden')
     setTimeout(() => {
       setControl({ start: { show: false } })
-      setProgress(true)
-    }, 500)
-    let activity = await axios.post(activity_api, {
+      if (!activity) {
+        setProgress(true)
+      }
+    }, 350)
+    activity = await axios.post(activity_api, {
       uf: userParams.uf,
       _d: userParams._d,
       vc3: userParams.vc3,
       uid: userParams._uid
     })
-    console.log(activity.data)
+    // console.log(activity.data)
     setProgress(false)
     if (activity.data === 'NoActivity') {
       setSign({ activity: { name: '无签到活动' }, status: '' })
