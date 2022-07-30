@@ -11,8 +11,8 @@
 命令描述：
 
 - `yarn install` ，安装依赖，如果时间太长请尝试挂代理或使用淘宝源。
-- `yarn start` ，启动开发服务器，不要忘记把接口服务(另一个仓库)也运行起来。
-- `yarn build` ，构建项目，输出到 build 文件夹。
+- `yarn dev` ，启动开发服务器，不要忘记把接口服务(另一个仓库)也运行起来。
+- `yarn build` ，构建项目，输出到 dist 文件夹。
 
 ## 配置
 
@@ -26,8 +26,8 @@
 
 步骤：
 1. 确认已进行过必要的配置，例如接口地址、文字识别服务。
-2. 在本地的项目目录下运行 `yarn build` 或 `npm run build` ，将构建网页并输出到 build 目录下。
-3. 将 build 目录内的所有内容（不包括build文件夹），在静态网站托管页面上传。
+2. 在本地的项目目录下运行 `yarn build` 或 `npm run build` ，将构建网页并输出到 dist 目录下。
+3. 将 dist 目录内的所有内容（不包括dist文件夹），在静态网站托管页面上传。
 4. 通过云开发的默认域名即可访问。
 
 ![](https://636c-cloudbase-1a4211-1252446325.tcb.qcloud.la/chaoxing-sign-ui/tcb-hosting.png?)
