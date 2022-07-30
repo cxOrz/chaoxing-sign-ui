@@ -18,7 +18,7 @@
 
 `src/config/api.js` ：该文件中配置 `baseUrl` 变量为接口地址，默认 `http://localhost:5000` 。若接口部署在服务器，不要忘记将接口地址改为服务器IP或绑定的域名。
 
-`src/pages/DashBoard/DashBoard.tsx` ：若使用腾讯云的通用文字识别服务，二维码识别成功率极高，支持PNG、JPG、JPEG、PDF等格式，图片大小不能超过7M。查看此源码文件中的 parseEnc 函数，可注释掉默认函数，使用推荐函数，同时需要在CLI项目中的 `env.json` 中配置 `secretId` 和 `secretKey`。
+`src/pages/DashBoard/Helper.ts` ：若使用腾讯云的通用文字识别服务，二维码识别成功率极高，支持PNG、JPG、JPEG、PDF等格式，图片大小不能超过7M。查看此源码文件中的 parseEnc 函数，可注释掉默认函数，使用推荐函数，同时需要在CLI项目中的 `env.json` 中配置 `secretId` 和 `secretKey`。
 
 ## 最佳实践
 
