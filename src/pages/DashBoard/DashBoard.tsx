@@ -65,10 +65,11 @@ function DashBoard() {
     })
     // console.log(activity.data)
     setProgress(false)
-    if (activity.data === 'NoActivity') {
-      setSign({ activity: { name: '无签到活动' }, status: '' })
-    } else {
-      setSign({ activity: (activity.data as Activity), status: '' })
+    switch (activity.data) {
+      case 'NoActivity': setSign({ activity: { name: '无签到活动' }, status: '' }); break;
+      case 'AuthRequired': setSign({ activity: { name: '需重新登录' }, status: '' }); break;
+      case 'NoCourse': setSign({ activity: { name: '无课程' }, status: '' }); break;
+      default: setSign({ activity: (activity.data as Activity), status: '' });
     }
   }
 
