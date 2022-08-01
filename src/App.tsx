@@ -1,6 +1,6 @@
-import { ButtonBase } from '@mui/material';
-import { useNavigate, Outlet } from 'react-router-dom';
 import React from 'react';
+import ButtonBase from '@mui/material/ButtonBase';
+import { useNavigate, Outlet } from 'react-router-dom';
 import './App.css';
 
 function App() {
