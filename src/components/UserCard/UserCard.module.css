@@ -2,20 +2,50 @@
   color: rgb(73, 85, 105);
   font-weight: 600;
 }
-.neum-card {
+
+.neumCard {
   border-radius: 13px !important;
   box-shadow: 16px 16px 32px #c9cccf, -16px -16px 32px #ffffff !important;
   transition: 0.3s !important;
 }
 
-.neum-card:hover {
+.neumCard:hover {
   transform: scale(1.05);
   background: #e9eef1;
   transition: 0.3s;
 }
 
+.monitorBtn {
+  position: absolute;
+  top: 17px;
+  right: 32px;
+  padding: 0 0.5rem;
+  font-size: 1rem;
+  background-color: transparent;
+  border-style: dashed;
+  border-width: 3px;
+}
+
+.active {
+  color: #2fa835;
+  transition: all 0.2s;
+}
+
+.active:hover {
+  background-color: #f2f5f7;
+}
+
+.inactive {
+  color: lightslategray;
+  transition: all 0.2s;
+}
+
+.inactive:hover {
+  background-color: #f2f5f7;
+}
+
 @media screen and (max-width: 500px) {
-  .neum-card {
+  .neumCard {
     border-radius: 13px;
     background: #ecf0f3;
     margin: 0 1rem 2rem !important;

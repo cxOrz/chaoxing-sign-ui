@@ -194,7 +194,9 @@ function DashBoard() {
               _d: res.data._d,
               uf: res.data.uf,
               name: res.data.name,
-              date: new Date()
+              date: new Date(),
+              lv: res.data.lv,
+              monitor: false
             }
             setUserParams(userParam)
             // 登陆成功将新信息写入数据库

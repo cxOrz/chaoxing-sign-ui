@@ -4,19 +4,19 @@
   color: #6f788c;
 }
 
-.neum-card {
+.neumCard {
   border-radius: 13px;
   background: #ecf0f3;
   box-shadow: 16px 16px 32px #c9cccf, -16px -16px 32px #ffffff;
 }
 
-.start-box {
+.startBox {
   margin-top: 5rem;
   margin-bottom: 5rem;
 }
 
 @media screen and (max-width: 500px) {
-  .neum-card {
+  .neumCard {
     border-radius: 13px;
     background: #ecf0f3;
     margin: 0 1rem 2rem !important;

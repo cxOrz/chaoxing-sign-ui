@@ -13,16 +13,16 @@ import DialogActions from '@mui/material/DialogActions'
 import Snackbar from '@mui/material/Snackbar'
 import Alert from '@mui/material/Alert'
 import UserCard from '../../components/UserCard/UserCard'
-import { login_api } from '../../config/api'
+import { login_api, monitor_start_api, monitor_status_api, monitor_stop_api } from '../../config/api'
 import { UserParamsType } from '../../types/global'
-import './Start.css'
+import styles from './Start.module.css'
 
 type UserListType = UserParamsType[]
 
 function Start() {
   const [indb, setIndb] = useState<IDBDatabase>()
   const [open, setOpen] = useState(false)
-  const [message, setMessage] = useState(false)
+  const [alert, setAlert] = useState({ open: false, message: '' })
   const [user, setUser] = useState<UserListType>([])
   const loginBtn = useRef<HTMLButtonElement>(null)
   const phone = useRef<HTMLInputElement>(null)
@@ -53,7 +53,9 @@ function Start() {
           _d: res.data._d,
           uf: res.data.uf,
           name: res.data.name, // 姓名
-          date: new Date() // 判断时间进行重新认证身份
+          date: new Date(), // 判断时间进行重新认证身份
+          monitor: false,
+          lv: res.data.lv
         })
       request.onerror = () => { console.log('用户写入失败') }
       request.onsuccess = () => {
@@ -62,7 +64,66 @@ function Start() {
       }
     }
     else {
-      setMessage(true)
+      setAlert({ open: true, message: '登陆失败' });
+    }
+  }
+
+  // 修改监听状态，本函数作为props传给UserCard组件来调用
+  const setMonitorMode = async (target: UserParamsType) => {
+    const reqData = target.monitor ? { phone: target.phone } : {
+      phone: target.phone,
+      uf: target.uf,
+      _d: target._d,
+      vc3: target.vc3,
+      uid: target._uid,
+      lv: target.lv,
+      fid: target.fid
+    };
+    const result = (await axios.post(target.monitor ? monitor_stop_api : monitor_start_api, reqData)).data;
+    switch (result.code) {
+      case 200: {
+        toggleMonitorState(target, true);
+        break;
+      }
+      case 201: {
+        toggleMonitorState(target, false); break;
+      }
+      case 202: {
+        toggleMonitorState(target, false);
+        setAlert({ open: true, message: '身份过期' });
+      }
+    }
+  }
+
+  // 设置用户 monitor 属性为 true/false
+  const toggleMonitorState = (target: UserParamsType, value: boolean) => {
+    setUser(prev => {
+      return prev.map(user => {
+        if (user === target) {
+          return { ...user, monitor: value };
+        }
+        return user;
+      })
+    });
+    // 同时要将 monitor 值写入数据库
+    let request = indb!.transaction(['user'], 'readwrite')
+      .objectStore('user')
+      .put({
+        phone: target.phone,
+        fid: target.fid,
+        vc3: target.vc3,
+        password: target.password,
+        _uid: target._uid,
+        _d: target._d,
+        uf: target.uf,
+        name: target.name,
+        date: new Date(),
+        monitor: value,
+        lv: target.lv
+      })
+    request.onerror = () => { console.log('写入失败') }
+    request.onsuccess = () => {
+      console.log('写入成功')
     }
   }
 
@@ -101,19 +162,42 @@ function Start() {
     }
   }, [])
 
+  // 获取每个用户的监听状态
+  useEffect(() => {
+    if (user.length > 0) {
+      const monitorStatus: boolean[] = [];
+      const tasks: any[] = [];
+      for (let i = 0; i < user.length; i++) {
+        tasks.push(axios.post(monitor_status_api, { phone: user[i].phone }));
+      }
+      // Promise.all 请求所有用户的 monitor 状态，全部完成后得到状态数组 res
+      Promise.all(tasks).then((res) => {
+        for (let i = 0; i < user.length; i++) {
+          if (res[i]!.data.code === 200) monitorStatus[i] = true;
+          else monitorStatus[i] = false;
+        }
+        // 对应更新每个用户的 monitor 状态
+        setUser(prev => {
+          return prev.map((user, index) => {
+            return { ...user, monitor: monitorStatus[index] };
+          });
+        });
+      });
+    }
+  }, [user.length])
+
   return (
-    <div className='start-box'>
+    <div className={styles.startBox}>
       <h1>让我们开始吧</h1>
-      <p className='hint'>你可以选择或添加一个用户</p>
+      <p className={styles.hint}>你可以选择或添加一个用户</p>
       {
         // 渲染所有用户卡片
         user.map((e, i) => {
           return (<UserCard
             indb={indb as IDBDatabase}
             key={i}
-            name={e.name}
-            phone={e.phone}
-            date={new Date(e.date).toLocaleString()}
+            user={e}
+            setMonitorMode={setMonitorMode}
           />)
         })
       }
@@ -122,11 +206,12 @@ function Start() {
           maxWidth: 345,
           minWidth: 300,
           backgroundColor: '#ecf0f3',
+          borderRadius: '13px',
           height: 165,
           marginBottom: 3.5,
           marginRight: 3.5
         }}
-        className='neum-card'
+        className={styles.neumCard}
         onClick={() => { setOpen(true) }}
       >
         <Icon sx={{
@@ -169,12 +254,12 @@ function Start() {
         </DialogActions>
       </Dialog>
       <Snackbar
-        open={message}
+        open={alert.open}
         autoHideDuration={2000}
-        onClose={() => { setMessage(false) }}
+        onClose={() => { setAlert({ open: false, message: '' }) }}
       >
-        <Alert onClose={() => { setMessage(false) }} severity="error" sx={{ width: '100%' }}>
-          登陆失败
+        <Alert onClose={() => { setAlert({ open: false, message: '' }) }} severity="error" sx={{ width: '100%' }}>
+          {alert.message}
         </Alert>
       </Snackbar>
     </div>

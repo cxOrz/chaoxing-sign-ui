@@ -9,17 +9,17 @@ import MenuItem from '@mui/material/MenuItem'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import { useNavigate } from 'react-router-dom'
-import './UserCard.css'
+import styles from './UserCard.module.css'
+import { UserParamsType } from '../../types/global'
 
 interface UserCardProps {
   indb: IDBDatabase;
-  name: string;
-  phone: string;
-  date: string;
+  user: UserParamsType;
+  setMonitorMode: (user: UserParamsType) => void;
 }
 
 function UserCard(props: UserCardProps) {
-  const phoneStr = `${props.phone.substring(0, 3)} **** **${props.phone.substring(9)}`
+  const phoneStr = `${props.user.phone.substring(0, 3)} **** **${props.user.phone.substring(9)}`
   const navigate = useNavigate()
   const [contextMenu, setContextMenu] = useState<{
     mouseX: number;
@@ -27,7 +27,7 @@ function UserCard(props: UserCardProps) {
   } | null>(null)
 
   const removeUser = () => {
-    let request = props.indb.transaction('user', 'readwrite').objectStore('user').delete(props.phone)
+    let request = props.indb.transaction('user', 'readwrite').objectStore('user').delete(props.user.phone)
     request.onsuccess = (event) => {
       console.log('用户已被移除')
       handleClose()
@@ -51,6 +51,20 @@ function UserCard(props: UserCardProps) {
     setContextMenu(null)
   }
 
+  const debounced = (fn: (params: any) => void, delay: number, params: any) => {
+    let timeout: any = null;
+    return function () {
+      if (timeout) clearTimeout(timeout);
+      timeout = setTimeout(fn, delay, params);
+    }
+  }
+
+  const debouncedSetMonitor = debounced(props.setMonitorMode, 300, props.user);
+
+  const handleMonitorChange = async (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+    e.stopPropagation();
+    debouncedSetMonitor();
+  }
 
   return (
     <Card sx={{
@@ -63,17 +77,22 @@ function UserCard(props: UserCardProps) {
       verticalAlign: 'bottom'
     }}
       onContextMenu={handleContextMenu}
-      className='neum-card'
+      className={styles.neumCard}
     >
-      <CardActionArea onClick={() => { navigate('/dash/' + props.phone) }}>
-        <CardContent>
+      <CardActionArea onClick={() => { navigate('/dash/' + props.user.phone) }}>
+        <CardContent sx={{ position: 'relative' }}>
           <Typography variant="h5" align='left' component="div">
-            <span className='name'>{props.name}</span>
+            <span className={styles.name}>{props.user.name}</span>
             <p>{phoneStr}</p>
           </Typography>
           <Typography sx={{ color: 'rgb(73, 85, 105)' }} variant="body2" align='right'>
-            凭证日期：{props.date}
+            凭证日期：{new Date(props.user.date).toLocaleString()}
           </Typography>
+          <span className={styles.monitorBtn + ' ' + (props.user.monitor === true ? styles.active : styles.inactive)}
+            onClick={handleMonitorChange}
+          >
+            {props.user.monitor === true ? '监听' : '未监听'}
+          </span>
         </CardContent>
       </CardActionArea>
       <Menu
