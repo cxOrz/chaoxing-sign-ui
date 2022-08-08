@@ -20,13 +20,14 @@ import styles from './Start.module.css'
 type UserListType = UserParamsType[]
 
 function Start() {
-  const [indb, setIndb] = useState<IDBDatabase>()
-  const [open, setOpen] = useState(false)
-  const [alert, setAlert] = useState({ open: false, message: '' })
-  const [user, setUser] = useState<UserListType>([])
-  const loginBtn = useRef<HTMLButtonElement>(null)
-  const phone = useRef<HTMLInputElement>(null)
-  const password = useRef<HTMLInputElement>(null)
+  const [indb, setIndb] = useState<IDBDatabase>();
+  const [open, setOpen] = useState(false);
+  const [alert, setAlert] = useState({ open: false, message: '' });
+  const [user, setUser] = useState<UserListType>([]);
+  const [loaded, setLoaded] = useState(false);
+  const loginBtn = useRef<HTMLButtonElement>(null);
+  const phone = useRef<HTMLInputElement>(null);
+  const password = useRef<HTMLInputElement>(null);
 
   const login = async () => {
     loginBtn.current!.disabled = true
@@ -149,6 +150,8 @@ function Start() {
             return [...prev, userValue]
           })
           cursor.continue()
+        } else {
+          setLoaded(true);
         }
       }
     }
@@ -184,7 +187,7 @@ function Start() {
         });
       });
     }
-  }, [user.length])
+  }, [loaded])
 
   return (
     <div className={styles.startBox}>
