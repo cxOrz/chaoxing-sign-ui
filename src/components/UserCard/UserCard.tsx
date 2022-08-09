@@ -21,6 +21,7 @@ interface UserCardProps {
 function UserCard(props: UserCardProps) {
   const phoneStr = `${props.user.phone.substring(0, 3)} **** **${props.user.phone.substring(9)}`
   const navigate = useNavigate()
+  const [once, setOnce] = useState(true);
   const [contextMenu, setContextMenu] = useState<{
     mouseX: number;
     mouseY: number;
@@ -54,12 +55,17 @@ function UserCard(props: UserCardProps) {
   const debounced = (fn: (params: any) => void, delay: number, params: any) => {
     let timeout: any = null;
     return function () {
+      if (once) {
+        fn(params);
+        setOnce(false);
+        return;
+      }
       if (timeout) clearTimeout(timeout);
       timeout = setTimeout(fn, delay, params);
     }
   }
 
-  const debouncedSetMonitor = debounced(props.setMonitorMode, 300, props.user);
+  const debouncedSetMonitor = debounced(props.setMonitorMode, 500, props.user);
 
   const handleMonitorChange = async (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
     e.stopPropagation();
