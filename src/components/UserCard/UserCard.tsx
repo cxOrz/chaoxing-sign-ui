@@ -15,13 +15,14 @@ import { UserParamsType } from '../../types/global'
 interface UserCardProps {
   indb: IDBDatabase;
   user: UserParamsType;
-  setMonitorMode: (user: UserParamsType) => void;
+  setMonitorMode: (user: UserParamsType) => Promise<void>;
 }
 
 function UserCard(props: UserCardProps) {
   const phoneStr = `${props.user.phone.substring(0, 3)} **** **${props.user.phone.substring(9)}`
   const navigate = useNavigate()
   const [once, setOnce] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [contextMenu, setContextMenu] = useState<{
     mouseX: number;
     mouseY: number;
@@ -52,22 +53,28 @@ function UserCard(props: UserCardProps) {
     setContextMenu(null)
   }
 
-  const debounced = (fn: (params: any) => void, delay: number, params: any) => {
+  const toggleMonitor = async () => {
+    setLoading(true);
+    await props.setMonitorMode(props.user);
+    setLoading(false);
+  }
+
+  const debounced = (fn: () => void, delay: number) => {
     let timeout: any = null;
     return function () {
       if (once) {
-        fn(params);
+        fn();
         setOnce(false);
         return;
       }
       if (timeout) clearTimeout(timeout);
-      timeout = setTimeout(fn, delay, params);
+      timeout = setTimeout(fn, delay);
     }
   }
 
-  const debouncedSetMonitor = debounced(props.setMonitorMode, 500, props.user);
+  const debouncedSetMonitor = debounced(toggleMonitor, 500);
 
-  const handleMonitorChange = async (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+  const handleMonitorChange = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
     e.stopPropagation();
     debouncedSetMonitor();
   }
@@ -97,7 +104,7 @@ function UserCard(props: UserCardProps) {
           <span className={styles.monitorBtn + ' ' + (props.user.monitor === true ? styles.active : styles.inactive)}
             onClick={handleMonitorChange}
           >
-            {props.user.monitor === true ? '监听' : '未监听'}
+            {loading ? '加载中' : props.user.monitor === true ? '监听' : '未监听'}
           </span>
         </CardContent>
       </CardActionArea>
