@@ -11,6 +11,7 @@ import ListItemText from '@mui/material/ListItemText'
 import { useNavigate } from 'react-router-dom'
 import styles from './UserCard.module.css'
 import { UserParamsType } from '../../types/global'
+import { useLongPress } from '../../hooks/useLongPress'
 
 interface UserCardProps {
   indb: IDBDatabase;
@@ -22,6 +23,9 @@ function UserCard(props: UserCardProps) {
   const phoneStr = `${props.user.phone.substring(0, 3)} **** **${props.user.phone.substring(9)}`
   const navigate = useNavigate()
   const [once, setOnce] = useState(true);
+  const [ref] = useLongPress((pos) => {
+    handleSafariContextMenu(pos)
+  }, 500);
   const [loading, setLoading] = useState(false);
   const [contextMenu, setContextMenu] = useState<{
     mouseX: number;
@@ -44,6 +48,17 @@ function UserCard(props: UserCardProps) {
         ? {
           mouseX: event.clientX - 2,
           mouseY: event.clientY - 4,
+        }
+        : null,
+    )
+  }
+
+  const handleSafariContextMenu = (position: { x: number, y: number }) => {
+    setContextMenu(
+      contextMenu === null
+        ? {
+          mouseX: position.x - 2,
+          mouseY: position.y - 4,
         }
         : null,
     )
@@ -89,6 +104,7 @@ function UserCard(props: UserCardProps) {
       marginRight: 3.5,
       verticalAlign: 'bottom'
     }}
+      ref={ref}
       onContextMenu={handleContextMenu}
       className={styles.neumCard}
     >
