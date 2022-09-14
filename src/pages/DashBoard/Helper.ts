@@ -78,7 +78,9 @@ export const parseEnc = (file: File): Promise<string> => {
     const qrcode = new Decoder()
     img.src = url.createObjectURL(file)
     qrcode.scan(img.src).then(result => {
-      resolve(result.data.split('=').pop() as string)
+      const enc_start = result.data.indexOf('enc=') + 4;
+      let rs = result.data.substring(enc_start, result.data.indexOf('&', enc_start));
+      resolve(rs);
     }).catch((reason) => {
       console.log(reason)
       resolve('识别失败')
