@@ -16,7 +16,7 @@
 
 ## 配置
 
-`src/config/api.js` ：该文件中配置 `baseUrl` 变量为接口地址，默认 `http://localhost:5000` 。若接口部署在服务器，不要忘记将接口地址改为服务器IP或绑定的域名。
+`src/config/api.ts` ：该文件中配置 `baseUrl` 变量为接口地址，默认 `http://localhost:5000` 。若接口部署在服务器，不要忘记将接口地址改为服务器IP或绑定的域名。
 
 `src/pages/DashBoard/Helper.ts` ：若使用腾讯云的通用文字识别服务，二维码识别成功率极高，支持PNG、JPG、JPEG、PDF等格式，图片大小不能超过7M。查看此源码文件中的 parseEnc 函数，可注释掉默认函数，使用推荐函数，同时需要在CLI项目中的 `env.json` 中配置 `secretId` 和 `secretKey`。
 
@@ -30,7 +30,7 @@
 3. 将 dist 目录内的所有内容（不包括dist文件夹），在静态网站托管页面上传。
 4. 通过云开发的默认域名即可访问。
 
-![](https://636c-cloudbase-1a4211-1252446325.tcb.qcloud.la/chaoxing-sign-ui/tcb-hosting.png?)
+![](https://cxorz.blob.core.windows.net/static-files/tcb-hosting.png)
 
 ## 贡献
 
@@ -40,8 +40,8 @@
 
 演示地址：https://prod.d6afmntd8nh5y.amplifyapp.com （部署在香港，较慢，仅供演示）
 
-![](https://636c-cloudbase-1a4211-1252446325.tcb.qcloud.la/chaoxing-sign-ui/1.png)
-![](https://636c-cloudbase-1a4211-1252446325.tcb.qcloud.la/chaoxing-sign-ui/2.png?)
+![](https://cxorz.blob.core.windows.net/static-files/ui-start.png)
+![](https://cxorz.blob.core.windows.net/static-files/ui-qrcode-sign.png)
 
 ## 免责声明
 
