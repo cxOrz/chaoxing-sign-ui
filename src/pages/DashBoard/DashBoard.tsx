@@ -1,16 +1,15 @@
-import React, { useEffect, useState } from 'react'
-import axios from 'axios'
-import Box from '@mui/system/Box'
-import CircularProgress from '@mui/material/CircularProgress'
-import Snackbar from '@mui/material/Snackbar'
-import Alert from '@mui/material/Alert'
-import ButtonBase from '@mui/material/ButtonBase'
-import './DashBoard.css'
-import { useParams } from 'react-router-dom'
-import { activity_api, login_api } from '../../config/api'
-import { UserParamsType } from '../../types/global'
-import { AlertColor } from '@mui/material'
-import { generalSign, getuvToken, locationSign, parseEnc, photoSign, qrcodeSign, showResultWithTransition, uploadFile } from './Helper'
+import { AlertColor } from '@mui/material';
+import Alert from '@mui/material/Alert';
+import ButtonBase from '@mui/material/ButtonBase';
+import CircularProgress from '@mui/material/CircularProgress';
+import Snackbar from '@mui/material/Snackbar';
+import Box from '@mui/system/Box';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { activity_api, login_api } from '../../config/api';
+import './DashBoard.css';
+import { generalSign, getuvToken, locationSign, parseEnc, photoSign, qrcodeSign, showResultWithTransition, uploadFile } from './Helper';
 
 interface SignInfo {
   activity: Activity
@@ -18,7 +17,7 @@ interface SignInfo {
 }
 interface Activity {
   name: string;
-  aid?: number;
+  activeId?: number;
   courseId?: string | number;
   classId?: string | number;
   otherId?: string | number;
@@ -126,7 +125,7 @@ function DashBoard() {
   const onSign_0 = async () => {
     let res: string
     if ((document.getElementById('general') as HTMLInputElement)!.checked) {
-      res = await generalSign(userParams, sign.activity.aid);
+      res = await generalSign(userParams, sign.activity.activeId);
     } else {
       setBtnProgress(true)
       // 获取uvtoken
@@ -135,13 +134,13 @@ function DashBoard() {
       let result_upload = await uploadFile(userParams, values['photo'] as File, token);
       console.log(result_upload)
       // 传入objectId进行签到
-      res = await photoSign(userParams, sign.activity.aid, result_upload.objectId);
+      res = await photoSign(userParams, sign.activity.activeId, result_upload.objectId);
       setBtnProgress(false)
     }
     showResultWithTransition(setStatus, res);
   }
   const onSign_2 = async () => {
-    let res = await qrcodeSign(userParams, sign.activity.aid, values['enc'] as string);
+    let res = await qrcodeSign(userParams, sign.activity.activeId, values['enc'] as string);
     showResultWithTransition(setStatus, res);
   }
   const setEncByQRCodeImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -156,12 +155,12 @@ function DashBoard() {
   }
   const onSign_4 = async () => {
     let latlon = values['latlon'] as string, address = values['address'] as string
-    let res = await locationSign(userParams, sign.activity.aid, latlon.substring(latlon.indexOf(',') + 1, latlon.length),
+    let res = await locationSign(userParams, sign.activity.activeId, latlon.substring(latlon.indexOf(',') + 1, latlon.length),
       latlon.substring(0, latlon.indexOf(',')), address);
     showResultWithTransition(setStatus, res);
   }
   const onSign_35 = async () => {
-    let res = await generalSign(userParams, sign.activity.aid);
+    let res = await generalSign(userParams, sign.activity.activeId);
     showResultWithTransition(setStatus, res);
   }
 

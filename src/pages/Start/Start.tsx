@@ -14,7 +14,6 @@ import Snackbar from '@mui/material/Snackbar'
 import Alert from '@mui/material/Alert'
 import UserCard from '../../components/UserCard/UserCard'
 import { login_api, monitor_start_api, monitor_status_api, monitor_stop_api } from '../../config/api'
-import { UserParamsType } from '../../types/global'
 import styles from './Start.module.css'
 
 type UserListType = UserParamsType[]

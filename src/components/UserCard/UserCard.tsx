@@ -10,7 +10,6 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import { useNavigate } from 'react-router-dom'
 import styles from './UserCard.module.css'
-import { UserParamsType } from '../../types/global'
 import { useLongPress } from '../../hooks/useLongPress'
 
 interface UserCardProps {

@@ -1,4 +1,8 @@
-export interface UserParamsType {
+declare module '*.module.css';
+
+declare module '@nuintun/qrcode';
+
+interface UserParamsType {
   phone: string;
   password: string;
   name: string;
