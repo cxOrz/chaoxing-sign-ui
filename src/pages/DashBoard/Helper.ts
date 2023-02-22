@@ -1,6 +1,6 @@
 import { Decoder } from '@nuintun/qrcode';
 import axios from 'axios';
-import { general_api, location_api, photo_api, qrcode_api, upload_api, uvtoken_api } from '../../config/api';
+import { general_api, location_api, ocr_api, photo_api, qrcode_api, upload_api, uvtoken_api } from '../../config/api';
 
 export const generalSign = async (userParams: UserParamsType, activeId: number | undefined) => {
   let result = await axios.post(general_api, {
